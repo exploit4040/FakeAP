@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accueil WiFi - Connectez-vous</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+        
+        header {
+            text-align: center;
+            color: white;
+            padding: 20px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+        
+        .logo i {
+            font-size: 2.5rem;
+            color: #ffde59;
+        }
+        
+        .logo h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+        }
+        
+        .tagline {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .main-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+        }
+        
+        .wifi-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            flex: 1;
+            min-width: 300px;
+            max-width: 500px;
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .card-header i {
+            font-size: 2.2rem;
+            color: #2575fc;
+        }
+        
+        .card-header h2 {
+            font-size: 1.8rem;
+            color: #2575fc;
+        }
+        
+        .wifi-details {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+        
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #eaeaea;
+        }
+        
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+        
+        .detail-label {
+            font-weight: 600;
+            color: #555;
+        }
+        
+        .detail-value {
+            color: #2575fc;
+            font-family: monospace;
+            font-size: 1.1rem;
+        }
+        
+        .password-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 5px;
+        }
+        
+        .password-field {
+            flex: 1;
+            font-family: monospace;
+            font-size: 1.1rem;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background-color: #f8f9fa;
+        }
+        
+        .copy-btn {
+            background-color: #2575fc;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 15px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .copy-btn:hover {
+            background-color: #1a65e0;
+        }
+        
+        .instructions {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f0f7ff;
+            border-radius: 10px;
+            border-left: 5px solid #2575fc;
+        }
+        
+        .instructions h3 {
+            color: #2575fc;
+            margin-bottom: 10px;
+        }
+        
+        .instructions ol {
+            padding-left: 20px;
+        }
+        
+        .instructions li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+        
+        .status-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            flex: 1;
+            min-width: 300px;
+            max-width: 500px;
+        }
+        
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #eaeaea;
+        }
+        
+        .status-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+        }
+        
+        .status-value {
+            font-weight: 600;
+        }
+        
+        .connected {
+            color: #2ecc71;
+        }
+        
+        .disconnected {
+            color: #e74c3c;
+        }
+        
+        .signal-strength {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .signal-bar {
+            width: 8px;
+            height: 20px;
+            background-color: #ddd;
+            border-radius: 2px;
+        }
+        
+        .signal-bar.active {
+            background-color: #2ecc71;
+        }
+        
+        .btn-connect {
+            display: block;
+            width: 100%;
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 18px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 25px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .btn-connect:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            width: 100%;
+            max-width: 1200px;
+        }
+        
+        .contact-info {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+        
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .wifi-card, .status-card {
+                width: 100%;
+                max-width: 100%;
+            }
+            
+            .logo h1 {
+                font-size: 2rem;
+            }
+            
+            .tagline {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-wifi"></i>
+                <h1>Réseau WiFi</h1>
+            </div>
+            <p class="tagline">Connectez-vous à notre réseau haut débit pour profiter d'une connexion Internet rapide et sécurisée</p>
+        </header>
+        
+        <div class="main-content">
+            <div class="wifi-card">
+                <div class="card-header">
+                    <i class="fas fa-network-wired"></i>
+                    <h2>Informations de connexion</h2>
+                </div>
+                
+                <div class="wifi-details">
+                    <div class="detail-item">
+                        <span class="detail-label">Nom du réseau (SSID):</span>
+                        <span class="detail-value">WiFi-Guest</span>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <span class="detail-label">Type de sécurité:</span>
+                        <span class="detail-value">WPA2/WPA3</span>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <span class="detail-label">Mot de passe:</span>
+                        <div class="password-container">
+                            <input type="text" class="password-field" id="password" value="Guest2024!" readonly>
+                            <button class="copy-btn" id="copyBtn">
+                                <i class="fas fa-copy"></i> Copier
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <span class="detail-label">Bande de fréquence:</span>
+                        <span class="detail-value">2.4 GHz / 5 GHz</span>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <span class="detail-label">Adresse IP par défaut:</span>
+                        <span class="detail-value">192.168.1.1</span>
+                    </div>
+                </div>
+                
+                <button class="btn-connect" id="connectBtn">
+                    <i class="fas fa-plug"></i> Se connecter au réseau
+                </button>
+                
+                <div class="instructions">
+                    <h3>Instructions de connexion</h3>
+                    <ol>
+                        <li>Activez le WiFi sur votre appareil</li>
+                        <li>Sélectionnez le réseau "WiFi-Guest" dans la liste</li>
+                        <li>Entrez le mot de passe lorsque demandé</li>
+                        <li>Acceptez les conditions d'utilisation si nécessaire</li>
+                        <li>Profitez de votre connexion!</li>
+                    </ol>
+                </div>
+            </div>
+            
+            <div class="status-card">
+                <div class="card-header">
+                    <i class="fas fa-signal"></i>
+                    <h2>État du réseau</h2>
+                </div>
+                
+                <div class="status-details">
+                    <div class="status-item">
+                        <div class="status-label">
+                            <i class="fas fa-user-friends"></i>
+                            <span>Utilisateurs connectés:</span>
+                        </div>
+                        <div class="status-value">14/50</div>
+                    </div>
+                    
+                    <div class="status-item">
+                        <div class="status-label">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Vitesse de connexion:</span>
+                        </div>
+                        <div class="status-value">150 Mbps</div>
+                    </div>
+                    
+                    <div class="status-item">
+                        <div class="status-label">
+                            <i class="fas fa-wifi"></i>
+                            <span>Force du signal:</span>
+                        </div>
+                        <div class="status-value">
+                            <div class="signal-strength">
+                                <div class="signal-bar active"></div>
+                                <div class="signal-bar active"></div>
+                                <div class="signal-bar active"></div>
+                                <div class="signal-bar active"></div>
+                                <div class="signal-bar"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="status-item">
+                        <div class="status-label">
+                            <i class="fas fa-shield-alt"></i>
+                            <span>Sécurité:</span>
+                        </div>
+                        <div class="status-value connected">Active</div>
+                    </div>
+                    
+                    <div class="status-item">
+                        <div class="status-label">
+                            <i class="fas fa-server"></i>
+                            <span>Statut du serveur:</span>
+                        </div>
+                        <div class="status-value connected">En ligne</div>
+                    </div>
+                    
+                    <div class="status-item">
+                        <div class="status-label">
+                            <i class="fas fa-clock"></i>
+                            <span>Uptime:</span>
+                        </div>
+                        <div class="status-value">15 jours</div>
+                    </div>
+                </div>
+                
+                <div class="instructions">
+                    <h3>Conditions d'utilisation</h3>
+                    <p>En vous connectant à ce réseau WiFi, vous acceptez de l'utiliser de manière responsable et légale. La bande passante est limitée à 5GB par jour pour les utilisateurs invités.</p>
+                </div>
+            </div>
+        </div>
+        
+        <footer class="footer">
+            <p>Besoin d'assistance? Contactez notre support technique</p>
+            <div class="contact-info">
+                <div class="contact-item">
+                    <i class="fas fa-phone-alt"></i>
+                    <span>66854</span>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-envelope"></i>
+                    <span>support@wifireseau.fr</span>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-clock"></i>
+                    <span>Support disponible 7j/7, 9h-19h</span>
+                </div>
+            </div>
+            <p style="margin-top: 20px; font-size: 0.9rem; opacity: 0.8;">© 2026 Réseau WiFi. Tous droits réservés.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Fonction pour copier le mot de passe
+        document.getElementById('copyBtn').addEventListener('click', function() {
+            const passwordField = document.getElementById('password');
+            passwordField.select();
+            passwordField.setSelectionRange(0, 99999); // Pour mobile
+            
+            try {
+                const successful = document.execCommand('copy');
+                const originalText = this.innerHTML;
+                this.innerHTML = '<i class="fas fa-check"></i> Copié!';
+                this.style.backgroundColor = '#2ecc71';
+                
+                setTimeout(() => {
+                    this.innerHTML = originalText;
+                    this.style.backgroundColor = '';
+                }, 2000);
+            } catch(err) {
+                console.log('Erreur lors de la copie: ', err);
+            }
+        });
+        
+        // Simulation de connexion au WiFi
+        document.getElementById('connectBtn').addEventListener('click', function() {
+            const originalText = this.innerHTML;
+            this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Connexion en cours...';
+            this.disabled = true;
+            
+            // Simulation d'un délai de connexion
+            setTimeout(() => {
+                this.innerHTML = '<i class="fas fa-check"></i> Connecté!';
+                this.style.background = 'linear-gradient(to right, #2ecc71, #27ae60)';
+                
+                // Mettre à jour le nombre d'utilisateurs connectés
+                const userElement = document.querySelector('.status-item:first-child .status-value');
+                const currentUsers = parseInt(userElement.textContent.split('/')[0]);
+                userElement.textContent = (currentUsers + 1) + '/50';
+                
+                // Après 3 secondes, réinitialiser le bouton
+                setTimeout(() => {
+                    this.innerHTML = originalText;
+                    this.style.background = '';
+                    this.disabled = false;
+                }, 3000);
+            }, 2000);
+        });
+        
+        // Animation des barres de signal (simulation)
+        function animateSignalBars() {
+            const bars = document.querySelectorAll('.signal-bar');
+            let activeCount = 0;
+            
+            // Réinitialiser les barres
+            bars.forEach(bar => bar.classList.remove('active'));
+            
+            // Déterminer un nombre aléatoire de barres actives (entre 3 et 5)
+            activeCount = Math.floor(Math.random() * 3) + 3;
+            
+            // Activer les barres
+            for (let i = 0; i < activeCount; i++) {
+                bars[i].classList.add('active');
+            }
+        }
+        
+        // Animer les barres de signal toutes les 3 secondes
+        setInterval(animateSignalBars, 3000);
+        
+        // Initialiser les barres de signal
+        animateSignalBars();
+        
+        // Changer dynamiquement le nombre d'utilisateurs (simulation)
+        setInterval(() => {
+            const userElement = document.querySelector('.status-item:first-child .status-value');
+            const parts = userElement.textContent.split('/');
+            const currentUsers = parseInt(parts[0]);
+            const maxUsers = parseInt(parts[1]);
+            
+            // Simuler une fluctuation aléatoire du nombre d'utilisateurs
+            let newUsers = currentUsers + Math.floor(Math.random() * 3) - 1; // -1, 0 ou +1
+            newUsers = Math.max(1, Math.min(newUsers, maxUsers - 1));
+            
+            userElement.textContent = newUsers + '/' + maxUsers;
+        }, 10000);
+    </script>
+</body>
+</html>
